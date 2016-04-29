@@ -1,0 +1,20 @@
+extends ../layout
+
+block content
+  h1= title
+  form(id="DrugItem", method="post", action="")
+    div(name = "#{name}", id="#{name}")
+    label(for="DrugName") Drug Name
+    input(type="text", name="DrugName", id="DrugName")
+    label(for="Strength") Strength
+    input(type="text", name="Strength", id="Strength")
+    label
+      input(type="checkbox", name="Morning", id="Morning")
+      | Morning
+    label  
+      input(type="checkbox", name="Afternoon", id="Afternoon")
+      | Afternoon
+    label  
+      input(type="checkbox", name="Night", id="Night")
+      | Night
+    input(type="submit", value="#{buttonText}")

@@ -1,0 +1,25 @@
+h1 Mongoose Project Management
+h2= name
+p Name: #{name}
+p Contact Number: #{contact}
+p Email: #{email}
+  h3 Actions
+  ul
+    li
+      a(href="/user/edit") Edit user info
+    li
+      a(href="/user/delete") Delete #{name}
+    li
+      a(href="/logout") Logout #{name}
+
+block headjs
+  script ()
+    var userID = "#{userID}";
+  script (src="/javascripts/user/user.js")
+
+ h3 My Drug Potfolios
+ ul
+    li
+      a(href="/portfolio/new") Create a portfolio
+ ul#mydrugportfolios
+   li loading...

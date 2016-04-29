@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+  h1= title
+  form(id="DrugItem", method="post", action="")
+    label(for="Name") Name
+    input(type="text", name="Name", id="Name")
+    label(for="CompanyName") Company Name
+    input(type="text", name="CompanyName", id="CompanyName")
+    label(for="Strength") Strength
+    input(type="text", name="Strength", id="Strength")
+    input(type="submit", value="#{buttonText}")
