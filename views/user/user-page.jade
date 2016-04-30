@@ -3,7 +3,7 @@ h2= name
 p Name: #{name}
 p Contact Number: #{contact}
 p Email: #{email}
-  h3 Actions
+h3 Actions
   ul
     li
       a(href="/user/edit") Edit user info
@@ -13,13 +13,13 @@ p Email: #{email}
       a(href="/logout") Logout #{name}
 
 block headjs
-  script ()
-    var userID = "#{userID}";
-  script (src="/javascripts/user/user.js")
+  script()
+    var contact = "#{contact}";
+  script(src="/javascripts/user/user.js")
 
  h3 My Drug Potfolios
  ul
     li
       a(href="/portfolio/new") Create a portfolio
- ul#mydrugportfolios
+ ul#myportfolios
    li loading...

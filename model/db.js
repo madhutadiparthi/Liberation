@@ -146,10 +146,10 @@ var drugSchema = new mongoose.Schema({
 //Build the Project Model
 mongoose.model('Drug', drugSchema);
 
-/*projectSchema.statics.findByUserID = function (userid, callback) {
+portfolioSchema.statics.findByUserContact = function (userContact, callback) {
 	this.find(
-	{ createdBy: userid },
-	'_id projectName',
+	{ contact: userContact },
+	'_id name',
 	{sort: 'modifiedOn'},
 	callback);
-}*/
+}

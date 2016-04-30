@@ -44,21 +44,21 @@ exports.doCreate = function (req, res) {
 };
 
 exports.byUser = function(req, res) {
-	console.log("Getting user projects");
-	if(req.params.userid) {
-		Project.findByUserID(
-			req.params.userid,
-			function (err, projects) {
+	console.log("Getting user portfolios");
+	if(req.params.contact) {
+		portfolio.findByUserContact(
+			req.params.contact,
+			function (err, portfolios) {
 				if(!err) {
-					console.log(projects);
-					res.json(projects);
+					console.log(portfolios);
+					res.json(portfolios);
 				} else {
 					console.log(err);
-					res.json({"status": "error", "error":"Error finding projects"});
+					res.json({"status": "error", "error":"Error finding Portfolios"});
 				}
 			})
 	} else {
-		console.log("No user id supplied");
-		res.join({"status": "error", "error": "No user id supplied"});
+		console.log("No user contact supplied");
+		res.join({"status": "error", "error": "No user contact supplied"});
 	}
 };

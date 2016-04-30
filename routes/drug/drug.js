@@ -20,7 +20,7 @@ exports.doCreate = function (req, res) {
 		if(err) {
 			console.log(err);
 			if(err.code===11000) {
-				res.redirect('/project/new?exists=true');
+				res.redirect('/drug/new?exists=true');
 			} else {
 				res.redirect('/?error=true');
 			}
@@ -29,24 +29,4 @@ exports.doCreate = function (req, res) {
 			console.log("Drug added successfully: " + user);
 		}
 	});
-};
-
-exports.byUser = function(req, res) {
-	console.log("Getting user projects");
-	if(req.params.userid) {
-		Project.findByUserID(
-			req.params.userid,
-			function (err, projects) {
-				if(!err) {
-					console.log(projects);
-					res.json(projects);
-				} else {
-					console.log(err);
-					res.json({"status": "error", "error":"Error finding projects"});
-				}
-			})
-	} else {
-		console.log("No user id supplied");
-		res.join({"status": "error", "error": "No user id supplied"});
-	}
 };
