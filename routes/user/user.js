@@ -81,13 +81,3 @@ exports.doLogin = function (req, res) {
 		res.redirect('/login?404=error');
 	}
 };
-
-exports.createUser = function (req, res) {
-	User.create({
-		name: req.body.FullName,
-		contact: req.body.Contact,
-		email: req.body.Email,
-		modifiedOn: Date.now(),
-		lastLogin: Date.now()
-
-};
