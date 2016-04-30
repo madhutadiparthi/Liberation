@@ -42,7 +42,7 @@ app.post('/login', user.doLogin);		//Login action
 //USEr DRUG PORTFOLIO ROUTES
 app.get('/portfolio/new', portfolio.create);
 app.post('/portfolio/new', portfolio.doCreate);
-
+app.get('/portfolio/byuser/:contact', portfolio.byUser);
 
 //DRUG ROUTES
 app.get('/drug/new', drug.create);

@@ -1,9 +1,9 @@
-$document.ready(function () {
+$(document).ready(function () {
 	var strHTMLOutput = '';
 	$.ajax('/portfolio/byuser/' + contact, {
 		dataType: 'json',
 		error: function () {
-			console.log("ajax error : (");
+			console.log("ajax error : ()");
 		},
 		success: function (data) {
 			if(data.length > 0) {

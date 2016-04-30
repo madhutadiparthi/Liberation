@@ -102,6 +102,14 @@ var portfolioSchema =  new mongoose.Schema({
 	modifiedOn: Date
 });
 
+portfolioSchema.statics.findByUserContact = function (userContact, callback) {
+	this.find(
+	{ contact: userContact },
+	'_id name',
+	{sort: 'modifiedOn'},
+	callback);
+}
+
 //Build the User Model
 mongoose.model('Portfolio', portfolioSchema);
 
@@ -146,10 +154,4 @@ var drugSchema = new mongoose.Schema({
 //Build the Project Model
 mongoose.model('Drug', drugSchema);
 
-portfolioSchema.statics.findByUserContact = function (userContact, callback) {
-	this.find(
-	{ contact: userContact },
-	'_id name',
-	{sort: 'modifiedOn'},
-	callback);
-}
+

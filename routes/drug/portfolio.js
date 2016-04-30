@@ -56,7 +56,7 @@ exports.byUser = function(req, res) {
 					console.log(err);
 					res.json({"status": "error", "error":"Error finding Portfolios"});
 				}
-			})
+			});
 	} else {
 		console.log("No user contact supplied");
 		res.join({"status": "error", "error": "No user contact supplied"});
