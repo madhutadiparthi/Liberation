@@ -10,7 +10,7 @@ exports.index = function(req, res) {
 			contact: req.session.user.contact,
 			email: req.session.user.email,
 			userID: req.session.user._id
-		})
+		});
 	} else {
 		res.redirect('/login');
 	}
@@ -50,7 +50,7 @@ exports.doCreate = function (req, res) {
 exports.login = function (req, res) {
 	res.render('user/login-form', {
 		title: 'Log in' 
-	})
+	});
 };
 
 exports.doLogin = function (req, res) {
@@ -80,4 +80,14 @@ exports.doLogin = function (req, res) {
 	} else {
 		res.redirect('/login?404=error');
 	}
+};
+
+exports.createUser = function (req, res) {
+	User.create({
+		name: req.body.FullName,
+		contact: req.body.Contact,
+		email: req.body.Email,
+		modifiedOn: Date.now(),
+		lastLogin: Date.now()
+
 };

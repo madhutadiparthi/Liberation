@@ -33,7 +33,7 @@ app.use('/', routes);
 //USER ROUTES
 app.get('/user', user.index);		//Current user profile
 app.get('/user/new', user.create);	//Create new user form
-app.post('/user/new', user.doCreate);	//Cretae nwe user action
+app.post('/user/new', user.doCreate);	//Create new user action
 
 app.get('/login', user.login);			//Login Form
 app.post('/login', user.doLogin);		//Login action
