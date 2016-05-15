@@ -16,7 +16,7 @@ mongoose.connection.on('connected', function() {
 	console.log('Mongoose connected to ' + dbURI);
 });
 
-mongoose.connection.on('error', function() {
+mongoose.connection.on('error', function(err) {
 	console.log('Mongoose connection error: ' + err);
 });
 
@@ -108,7 +108,7 @@ portfolioSchema.statics.findByUserContact = function (userContact, callback) {
 	'_id name',
 	{sort: 'modifiedOn'},
 	callback);
-}
+};
 
 //Build the User Model
 mongoose.model('Portfolio', portfolioSchema);
@@ -117,26 +117,37 @@ mongoose.model('Portfolio', portfolioSchema);
 USER DRUG ORDER SCHEMA
 ****************************************************************/
 var userDrugOrderSchema =  new mongoose.Schema({
-	Orderid: String,
+	orderId: Number,
+	customerContact: Number,
+	customerName: String,
 	portfolioName: String,
-	drugName : String,
-	qty: Number,
-	vendorContact: { type: Number, 
-		validate: {
-			validator: function(v) {
-				return /d{10}/.test(v);
-			},
-			message: '{VALUE} is not a valid 10 digit number!'
-		}
-	},
+	vendorContact: Number,
+	vendorName: String,
+	drugList: [{
+		drugName: String,
+		strength: String,
+		quantity: Number,
+	}],
 	startDate: Date, //default but modifiable
-	endDate : Date, //automatically generated (startDate+quantity)
+	endDate : Date, //automatically generated (startDate+quantity) - as in how long this order will last
 	createdOn: {type: Date, default: Date.now},
-	modifiedOn: Date
+	modifiedOn: Date,
+	status: Number
 });
 
+// Find user orders
+userDrugOrderSchema.statics.findByUserContact = function (userContact, callback) {
+	this.find(
+	{ contact: userContact },
+	'orderId status customerContact customerName portfolioName vendorContact vendorName createdOn drugList',
+	{sort: 'modifiedOn'},
+	callback);
+};
+
+
+
 //Build the User Model
-mongoose.model('UserDrugOrder', userDrugOrderSchema);
+mongoose.model('Order', userDrugOrderSchema);
 
 /***************************************************************
 DRUG SCHEMA

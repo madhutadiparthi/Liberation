@@ -11,6 +11,7 @@ var routes = require('./routes/index');
 var user = require('./routes/user/user');
 var drug = require('./routes/drug/drug');
 var portfolio = require('./routes/drug/portfolio');
+var orders = require('./routes/orders/orders');
 
 var app = express();
 
@@ -47,6 +48,10 @@ app.get('/portfolio/byuser/:contact', portfolio.byUser);
 //DRUG ROUTES
 app.get('/drug/new', drug.create);
 app.post('/drug/new', drug.doCreate);
+
+// ORDER ROUTES
+app.post('/orders/new', orders.create);
+app.get('/orders/byuser', orders.byUser);
 
 
 // catch 404 and forward to error handler
