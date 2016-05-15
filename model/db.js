@@ -135,10 +135,19 @@ var userDrugOrderSchema =  new mongoose.Schema({
 	status: Number
 });
 
-// Find user orders
-userDrugOrderSchema.statics.findByUserContact = function (userContact, callback) {
+//Find user orders
+userDrugOrderSchema.statics.findByUserContact = function (customerContact, callback) {
 	this.find(
-	{ contact: userContact },
+	{ customerContact: customerContact },
+	'orderId status customerContact customerName portfolioName vendorContact vendorName createdOn drugList',
+	{sort: 'modifiedOn'},
+	callback);
+};
+
+//Find user orders
+userDrugOrderSchema.statics.findByOrderId = function (orderId, callback) {
+	this.find(
+	{ orderId: orderId },
 	'orderId status customerContact customerName portfolioName vendorContact vendorName createdOn drugList',
 	{sort: 'modifiedOn'},
 	callback);

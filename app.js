@@ -52,6 +52,7 @@ app.post('/drug/new', drug.doCreate);
 // ORDER ROUTES
 app.post('/orders/new', orders.create);
 app.get('/orders/byuser', orders.byUser);
+app.get('/orders/byorderid', orders.byOrderId);
 
 
 // catch 404 and forward to error handler

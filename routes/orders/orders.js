@@ -87,23 +87,64 @@ exports.create = function (req, res) {
  */
 
 exports.byUser = function(req, res) {
-		console.log("Getting user orders");
-		console.log(req.query);
-		console.log(JSON.stringify(req.query));
-		if(req.query.customerContact) {
-			Order.findByUserContact(
-				req.params.customerContact,
-				function (err, orderList) {
-					if(!err) {
-						console.log(orderList);
-						res.json(orderList);
-					} else {
-						console.log(err);
-						res.json({"status": "error", "error":"Error finding Orders"});
-					}
-				});
-		} else {
-			console.log("No user contact supplied");
-			res.send({"status": "error", "error": "No user contact supplied"});
-		}
-	};
+	console.log("Getting user orders");
+	console.log(req.query);
+	console.log(JSON.stringify(req.query));
+	if(req.query.customerContact) {
+		Order.findByUserContact(
+			req.query.customerContact,
+			function (err, orderList) {
+				if(!err) {
+					console.log(orderList);
+					res.json(orderList);
+				} else {
+					console.log(err);
+					res.json({"status": "error", "error":"Error finding Orders"});
+				}
+			});
+	} else {
+		console.log("No user contact supplied");
+		res.send({"status": "error", "error": "No user contact supplied"});
+	}
+};
+
+/*
+ * A typical URL would be of the format
+ * http://localhost:3000/orders/byorderid?orderId=1
+ * Returned data example:
+ * [{"_id":"57382e59cc900ccf1b936a13",
+ * "orderId":1,
+ * "customerContact":7829455333,
+ * "customerName":"Anarv",
+ * "portfolioName":"default",
+ * "vendorContact":918028450292,
+ * "vendorName":"PopularMedicals",
+ * "status":0,
+ * "createdOn":"2016-05-15T08:07:53.545Z",
+ * "drugList":[
+ * 		{"drugName":"Dolo","strength":"650mg","quantity":15,"_id":"57382e59cc900ccf1b936a15"},
+ * 		{"drugName":"Saridon","quantity":30,"_id":"57382e59cc900ccf1b936a14"}
+ * 	]
+ * }]
+ */
+exports.byOrderId = function(req, res) {
+	console.log("Getting Order");
+	console.log(req.query);
+	console.log(JSON.stringify(req.query));
+	if(req.query.orderId) {
+		Order.findByOrderId(
+			req.query.orderId,
+			function (err, order) {
+				if(!err) {
+					console.log("Order = " + order);
+					res.json(order);
+				} else {
+					console.log("Error: " + err);
+					res.json({"status": "error", "error":"Error finding Orders"});
+				}
+			});
+	} else {
+		console.log("No order ID supplied");
+		res.send({"status": "error", "error": "No user contact supplied"});
+	}
+};
