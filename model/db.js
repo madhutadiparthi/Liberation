@@ -136,7 +136,7 @@ var userDrugOrderSchema =  new mongoose.Schema({
 });
 
 //Find user orders
-userDrugOrderSchema.statics.findByUserContact = function (customerContact, callback) {
+userDrugOrderSchema.statics.findByCustomerContact = function (customerContact, callback) {
 	this.find(
 	{ customerContact: customerContact },
 	'orderId status customerContact customerName portfolioName vendorContact vendorName createdOn drugList',

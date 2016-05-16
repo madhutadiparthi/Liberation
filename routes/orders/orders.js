@@ -7,11 +7,11 @@ exports.create = function (req, res) {
 	var orderId = 0;
 
 	// Function to get the next order ID = #(existing orders) + 1
-	function getNextOrderId(callback) {
+	function getNextOrderId(callback, data, format) {
 		Order.count({}, function(error, count) {
 			console.log('I have '+count+' documents in my collection');
 			orderId = count + 1;
-			callback();
+			callback(data, format);
 		});
 		
 	}
@@ -32,81 +32,48 @@ exports.create = function (req, res) {
   				{"drugName":"Saridon","strngth":"500mg","quantity":"30"}
 			]
 		}
-	<data ends herer>
+	<data ends here>
 	 */
-	function createOrder() {
+	function createOrder(data, json) {
 	Order.create({
 		orderId: orderId,
-		customerContact: req.body.customerContact,
-		customerName: req.body.customerName,
+			customerContact: data.customerContact,
+		customerName: data.customerName,
 		portfolioName: 'default',
-		vendorContact: req.body.vendorContact,
-		vendorName: req.body.vendorName,
-		drugList: req.body.drugList,
+		vendorContact: data.vendorContact,
+		vendorName: data.vendorName,
+		drugList: data.drugList,
 		startDate: Date.now(),
 		endDate: Date.now() + 15*86400000,
 		modifiedOn: Date.now(),
 		status: 0
-	}, function(err, user) {
+	}, function(err, orderData) {
 		if(err) {
 			console.log(err);
 			res.redirect('/?error=true');
 		}
 		else {
 			//SUCCESS
-			res.writeHead(200, {'Content-Type': 'application/json'});
-			res.write("{'orderId':'");
-			res.write("" + orderId);
-			res.end("'}");
-			console.log("Order created and saved: " + user);
+			if (json) {
+				res.writeHead(200, {'Content-Type': 'application/json'});
+				res.write("{'orderId':'");
+				res.write("" + orderId);
+				res.end("'}");
+			}
+			else {
+				res.writeHead(200, {'Content-Type' : 'text/html'});
+				res.write('<html><head/><body>');
+				res.write('<h1>Order Id : ' + orderId + '</h1>');
+				res.end('</body>');
+			}
+			console.log("Order created and saved: " + orderData);
 		}
 	});
 	}
 	
-	getNextOrderId(createOrder);
-	console.log("Received the order : " + JSON.stringify(req.body));
-	
+	getNextOrderId(createOrder, req.body, req.accepts('json'));
 };
 
-// List my previous orders
-// for example http://localhost:3000/orders/byuser?customerContact=9902455333
-/* What you get back is of the format:
- [{"_id":"57382f8d0f8382e61b3df9c4",
- "orderId":3,
- "customerContact":7829455333,
- "customerName":"Anarv",
- "portfolioName":"default",
- "vendorContact":918028450292,
- "vendorName":"PopularMedicals",
- "status":0,
- "createdOn":"2016-05-15T08:13:01.471Z",
- "drugList":[
- 	{"drugName":"Dolo","strength":"650mg","quantity":15,"_id":"57382f8d0f8382e61b3df9c6"},
- 	{"drugName":"Saridon","quantity":30,"_id":"57382f8d0f8382e61b3df9c5"}]
- }]
- */
-
-exports.byUser = function(req, res) {
-	console.log("Getting user orders");
-	console.log(req.query);
-	console.log(JSON.stringify(req.query));
-	if(req.query.customerContact) {
-		Order.findByUserContact(
-			req.query.customerContact,
-			function (err, orderList) {
-				if(!err) {
-					console.log(orderList);
-					res.json(orderList);
-				} else {
-					console.log(err);
-					res.json({"status": "error", "error":"Error finding Orders"});
-				}
-			});
-	} else {
-		console.log("No user contact supplied");
-		res.send({"status": "error", "error": "No user contact supplied"});
-	}
-};
 
 /*
  * A typical URL would be of the format
@@ -128,16 +95,68 @@ exports.byUser = function(req, res) {
  * }]
  */
 exports.byOrderId = function(req, res) {
-	console.log("Getting Order");
-	console.log(req.query);
-	console.log(JSON.stringify(req.query));
+	console.log("Getting Order  OrderId = " + req.query.orderId);
 	if(req.query.orderId) {
 		Order.findByOrderId(
 			req.query.orderId,
 			function (err, order) {
 				if(!err) {
 					console.log("Order = " + order);
-					res.json(order);
+					if (req.accepts('json')) {
+						console.log("Accepting JSON...");
+						res.json(order);
+					}
+					else {
+						var orderJSONString = JSON.stringify(order);
+						var orderJSON = JSON.parse(orderJSONString);
+						console.log('OrderId:---> ' + orderJSON[0].orderId);
+						res.render('orders/order-page', {rows : orderJSON});
+					}
+				} else {
+					console.log("Error: " + err);
+					res.json({"status": "error", "error":"Error finding Orders"});
+				}
+			});
+	} else {
+		console.log("No order ID supplied");
+		res.send({"status": "error", "error": "No orderId supplied"});
+	}
+};
+
+//List my previous orders
+//for example http://localhost:3000/orders/byuser?customerContact=9902455333
+/* What you get back is of the format:
+[{"_id":"57382f8d0f8382e61b3df9c4",
+"orderId":3,
+"customerContact":7829455333,
+"customerName":"Anarv",
+"portfolioName":"default",
+"vendorContact":918028450292,
+"vendorName":"PopularMedicals",
+"status":0,
+"createdOn":"2016-05-15T08:13:01.471Z",
+"drugList":[
+	{"drugName":"Dolo","strength":"650mg","quantity":15,"_id":"57382f8d0f8382e61b3df9c6"},
+	{"drugName":"Saridon","quantity":30,"_id":"57382f8d0f8382e61b3df9c5"}]
+}]
+*/
+exports.byUser = function(req, res) {
+	console.log("Getting Order  for customerContact = " + req.query.customerContact);
+	if(req.query.customerContact) {
+		Order.findByCustomerContact(
+			req.query.customerContact,
+			function (err, orderList) {
+				if(!err) {
+					console.log("Order = " + orderList);
+					if (req.accepts('json')) {
+						console.log("Accepting JSON...");
+						res.json(orderList);
+					}
+					else {
+						var orderJSONString = JSON.stringify(orderList);
+						var orderJSON = JSON.parse(orderJSONString);
+						res.render('orders/order-page', {rows : orderJSON});
+					}
 				} else {
 					console.log("Error: " + err);
 					res.json({"status": "error", "error":"Error finding Orders"});

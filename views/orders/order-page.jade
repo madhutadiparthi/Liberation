@@ -1,0 +1,11 @@
+extends ../layout
+
+block content
+  h1 Past Orders
+  h3 Orders
+  table
+    for row in rows
+      tr(border=1)
+        td #{row.orderId}
+        td #{row.customerContact}
+        td #{row.customerName}
