@@ -171,7 +171,7 @@ var drugSchema = new mongoose.Schema({
 });
 
 
-//Build the Project Model
+//Build the Drug Model
 mongoose.model('Drug', drugSchema);
 
 /*****************************************************************
@@ -196,6 +196,8 @@ var vendorSchema = new mongoose.Schema({
 	
 });
 
+//Build the Vendor model
+mongoose.model('Vendor', vendorSchema);
 /*****************************************************************
  * ORDER QUEUE SCHEMA
  *****************************************************************/
