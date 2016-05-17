@@ -56,7 +56,7 @@ var userSchema =  new mongoose.Schema({
 	address: {houseNum: String,
 		buildingName: String,
 		street: String,
-		Area: String,
+		area: String,
 		city: String,
 		state: String,
 		pincode: Number
@@ -119,10 +119,10 @@ USER DRUG ORDER SCHEMA
 var userDrugOrderSchema =  new mongoose.Schema({
 	orderId: Number,
 	customerContact: Number,
-	customerName: String,
+	//customerName: String,
 	portfolioName: String,
 	vendorContact: Number,
-	vendorName: String,
+	//vendorName: String,
 	drugList: [{
 		drugName: String,
 		strength: String,
@@ -174,4 +174,31 @@ var drugSchema = new mongoose.Schema({
 //Build the Project Model
 mongoose.model('Drug', drugSchema);
 
+/*****************************************************************
+ * VENDOR SCHEMA
+ *****************************************************************/
+var vendorSchema = new mongoose.Schema({
+	name: String,
+	shopName: String,
+	contact : [Number],
+	addrress: {shopNum: String,
+		buildingName: String,
+		street: String,
+		area: String,
+		city: String,
+		state: String,
+		pincode: Number 
+		},
+	regId: String,
+	createdOn: {type: Date, default: Date.now},
+	modifiedOn: Date,
+	lastLogin: Date
+	
+});
 
+/*****************************************************************
+ * ORDER QUEUE SCHEMA
+ *****************************************************************/
+var orderQueueSchema = new mongoose.Schema({
+	queue: [{orderId : Number}]
+}
