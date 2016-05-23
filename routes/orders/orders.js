@@ -23,10 +23,8 @@ exports.create = function (req, res) {
 	   Data =
 	   <data starts here>
 	 	{
-			"customerContact" : 7829455333, 
-			"customerName" : "Anarv", 
+			"customerContact" : "9902455333", 
 			"vendorContact" : 918028450292, 
-			"vendorName" : "PopularMedicals",
 			"drugList": [
   				{"drugName":"Dolo", "strength":"650mg", "quantity":"15"},
   				{"drugName":"Saridon","strngth":"500mg","quantity":"30"}
@@ -70,24 +68,26 @@ exports.create = function (req, res) {
 };
 
 
-/*
- * A typical URL would be of the format
- * http://localhost:3000/orders/byorderid?orderId=1
- * Returned data example:
- * [{"_id":"57382e59cc900ccf1b936a13",
- * "orderId":1,
- * "customerContact":7829455333,
- * "customerName":"Anarv",
- * "portfolioName":"default",
- * "vendorContact":918028450292,
- * "vendorName":"PopularMedicals",
- * "status":0,
- * "createdOn":"2016-05-15T08:07:53.545Z",
- * "drugList":[
- * 		{"drugName":"Dolo","strength":"650mg","quantity":15,"_id":"57382e59cc900ccf1b936a15"},
- * 		{"drugName":"Saridon","quantity":30,"_id":"57382e59cc900ccf1b936a14"}
- * 	]
- * }]
+/**
+ 	Request: 
+ 	http://localhost:3000/orders/byorderid?orderId=1
+  
+ 	Response
+
+	[{
+		"_id":"5743240fa27be8f92844fde4",
+		"orderId":1,
+		"customerContact":9902455333,
+		"vendorContact":8023452850,
+		"status":0,
+		"createdOn":"2016-05-23T15:38:55.803Z",
+		"drugList":[
+			{"drugName":"Crocin","strength":"250mg","quantity":15,"_id":"5743240fa27be8f92844fde6"},
+			{"drugName":"Dolo","strength":"500mg","quantity":30,"_id":"5743240fa27be8f92844fde5"}
+		]
+	}]
+	
+	Empty response : [] if there are not matching orders
  */
 exports.byOrderId = function(req, res) {
 	console.log("Getting Order  OrderId = " + req.query.orderId);
@@ -118,22 +118,21 @@ exports.byOrderId = function(req, res) {
 	}
 };
 
-//List my previous orders
-//for example http://localhost:3000/orders/byuser?customerContact=9902455333
-/* What you get back is of the format:
-[{"_id":"57382f8d0f8382e61b3df9c4",
-"orderId":3,
-"customerContact":7829455333,
-"customerName":"Anarv",
-"portfolioName":"default",
-"vendorContact":918028450292,
-"vendorName":"PopularMedicals",
-"status":0,
-"createdOn":"2016-05-15T08:13:01.471Z",
-"drugList":[
-	{"drugName":"Dolo","strength":"650mg","quantity":15,"_id":"57382f8d0f8382e61b3df9c6"},
-	{"drugName":"Saridon","quantity":30,"_id":"57382f8d0f8382e61b3df9c5"}]
-}]
+/**
+
+  List my previous orders
+  	Request: http://localhost:3000/orders/byuser?customerContact=9902455333
+
+	Response: 
+	[
+		{"_id":"5743240fa27be8f92844fde4","orderId":1,"status":0},
+		{"_id":"57432479a27be8f92844fde7","orderId":2,"status":0}
+	]
+	
+	Empty response : [] if there are not matching orders
+	
+	Ofcourse, you could then extract the orderId from the response and retrieve the order details using the /byorderid API
+
 */
 exports.byUser = function(req, res) {
 	console.log("Getting Order  for customerContact = " + req.query.customerContact);
