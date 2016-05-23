@@ -37,15 +37,10 @@ exports.create = function (req, res) {
 	function createOrder(data, json) {
 	Order.create({
 		orderId: orderId,
-			customerContact: data.customerContact,
-		customerName: data.customerName,
-		portfolioName: 'default',
+		customerContact: data.customerContact,
 		vendorContact: data.vendorContact,
-		vendorName: data.vendorName,
 		drugList: data.drugList,
-		startDate: Date.now(),
-		endDate: Date.now() + 15*86400000,
-		modifiedOn: Date.now(),
+		createdOn: Date.now(),
 		status: 0
 	}, function(err, orderData) {
 		if(err) {

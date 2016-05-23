@@ -116,47 +116,43 @@ mongoose.model('Portfolio', portfolioSchema);
 /***************************************************************
 USER DRUG ORDER SCHEMA
 ****************************************************************/
-var userDrugOrderSchema =  new mongoose.Schema({
+var orderSchema =  new mongoose.Schema({
 	orderId: Number,
 	customerContact: Number,
-	//customerName: String,
-	portfolioName: String,
 	vendorContact: Number,
-	//vendorName: String,
 	drugList: [{
 		drugName: String,
 		strength: String,
 		quantity: Number,
 	}],
-	startDate: Date, //default but modifiable
-	endDate : Date, //automatically generated (startDate+quantity) - as in how long this order will last
 	createdOn: {type: Date, default: Date.now},
-	modifiedOn: Date,
-	status: Number
+	acceptedOrRejectedAt: Date,
+	transitAt: Date,
+	deiveredAt: Date,
+	status: Number // Enum: 0 = new, 1 = accepted, 2 = transit, 3 = delivered, -1 = rejected
 });
 
-//Find user orders
-userDrugOrderSchema.statics.findByCustomerContact = function (customerContact, callback) {
+//Find user orders to show on 'My Orders' screen
+orderSchema.statics.findByCustomerContact = function (customerContact, callback) {
 	this.find(
 	{ customerContact: customerContact },
-	'orderId status customerContact customerName portfolioName vendorContact vendorName createdOn drugList',
-	{sort: 'modifiedOn'},
+	'orderId status',
+	{sort: 'orderId'},
 	callback);
 };
 
-//Find user orders
-userDrugOrderSchema.statics.findByOrderId = function (orderId, callback) {
+//Find user orders - to show on an order detail screen for a customer or a vendor
+orderSchema.statics.findByOrderId = function (orderId, callback) {
 	this.find(
 	{ orderId: orderId },
-	'orderId status customerContact customerName portfolioName vendorContact vendorName createdOn drugList',
-	{sort: 'modifiedOn'},
+	'orderId status customerContact vendorContact createdOn drugList',
+	{sort: 'orderId'},
 	callback);
 };
-
 
 
 //Build the User Model
-mongoose.model('Order', userDrugOrderSchema);
+mongoose.model('Order', orderSchema);
 
 /***************************************************************
 DRUG SCHEMA
@@ -203,4 +199,4 @@ mongoose.model('Vendor', vendorSchema);
  *****************************************************************/
 var orderQueueSchema = new mongoose.Schema({
 	queue: [{orderId : Number}]
-}
+});
