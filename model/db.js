@@ -97,7 +97,7 @@ var portfolioSchema =  new mongoose.Schema({
                   morning: Boolean,
 				  afternoon: Boolean,
 				  night: Boolean}],
-	
+	inorout : Boolean,
 	createdOn: {type: Date, default: Date.now},
 	modifiedOn: Date
 });
