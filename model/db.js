@@ -36,46 +36,43 @@ mongoose.connection.on('SIGINT', function() {
 //connection events snipped out for brevity
 
 /***************************************************************
-USER SCHEMA
+CUSTOMER SCHEMA
 ****************************************************************/
-var userSchema =  new mongoose.Schema({
+var customerSchema =  new mongoose.Schema({
 	name: String,
 	contact: Number,
-	/*contact: { type: Number, 
-				validate: {
-					validator: function(v) {
-						return /d{10}/.test(v);
-					},
-					message: '{VALUE} is not a valid 10 digit number!'
-				}
-			},*/
 	email: {type: String, unique:true},
-	dob: Date,
-	age: Number,
-	gender: String,
-	address: {houseNum: String,
-		buildingName: String,
-		street: String,
-		area: String,
-		city: String,
-		state: String,
-		pincode: Number
-		/*pincode: { type: Number, 
-			validate: {
-				validator: function(v) {
-					return /d{6}/.test(v);
-				},
-				message: '{VALUE} is not a valid 6 digit number!'
-			}
-		}*/
-	},
+	address: String,
 	createdOn: {type: Date, default: Date.now},
 	modifiedOn: Date,
 	lastLogin: Date
 });
 
-//Build the User Model
-mongoose.model('User', userSchema);
+//Get the customer details using contact
+customerSchema.statics.findByCustomerContact = function (contact, callback) {
+	this.find(
+	{ contact: contact },
+	'name contact email address',
+	{sort: 'name'},
+	callback);
+};
+
+//Update customer profile
+customerSchema.statics.update = function (userData, callback) {
+	this.update(
+	{ contact: userData.contact },
+	{$set : {name: userData.name,
+			 contact: userData.contact,
+			 email : userData.email,
+			 address : userData.address,
+			 modifiedOn: userData.modifiedOn,
+			 lastLogin: userData.lastLogin
+		}
+	},
+	callback);
+};
+//Build the Customer  Model
+mongoose.model('Customer', customerSchema);
 
 /***************************************************************
 USER DRUG PORTFOLIO SCHEMA
@@ -83,21 +80,12 @@ USER DRUG PORTFOLIO SCHEMA
 var portfolioSchema =  new mongoose.Schema({
 	name: String,
 	contact: Number,
-	/*contact: { type: Number, 
-				validate: {
-					validator: function(v) {
-						return /d{10}/.test(v);
-					},
-					message: '{VALUE} is not a valid 10 digit number!'
-				}
-			},*/
-	drugName : String,
-	drugInfo : [ {strength: String,
-                  dosage: Number,
-                  morning: Boolean,
-				  afternoon: Boolean,
-				  night: Boolean}],
-	inorout : Boolean,
+	drugList: [{
+		drugName: String,
+		strength: String,
+		dosage: Number,
+		inorout : Boolean
+	}],
 	createdOn: {type: Date, default: Date.now},
 	modifiedOn: Date
 });
@@ -123,7 +111,7 @@ var orderSchema =  new mongoose.Schema({
 	drugList: [{
 		drugName: String,
 		strength: String,
-		quantity: Number,
+		quantity: Number
 	}],
 	createdOn: {type: Date, default: Date.now},
 	acceptedOrRejectedAt: Date,
@@ -159,11 +147,12 @@ DRUG SCHEMA
 ****************************************************************/
 var drugSchema = new mongoose.Schema({
 	name: String,
-	createdOn: {type: Date, default: Date.now},
-	modifiedOn: Date,
 	companyName: String,
 	composition: [String],
-	strength: String
+	strength: String,
+	type : String,
+	genericName : String,
+	modifiedOn: {type: Date, default: Date.now}
 });
 
 

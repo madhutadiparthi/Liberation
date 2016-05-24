@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
-var User = mongoose.model('User');
+var Customer = mongoose.model('Customer');
 
-//GET user creation form
+//GET Customer creation form
 exports.index = function(req, res) {
 	if(req.session.loggedIn === true) {
 		res.render('user/user-page', {
@@ -16,7 +16,7 @@ exports.index = function(req, res) {
 	}
 };
 
-//GET user creation form
+//GET Customer creation form
 exports.create = function(req, res) {
 	res.render('user/user-form', {
 		title : 'Create user',
@@ -24,9 +24,9 @@ exports.create = function(req, res) {
 	});
 };
 
-//POST new user creation form
+//POST new Customer creation form
 exports.doCreate = function (req, res) {
-	User.create({
+	Customer.create({
 		name: req.body.FullName,
 		contact: req.body.Contact,
 		email: req.body.Email,
@@ -55,7 +55,7 @@ exports.login = function (req, res) {
 
 exports.doLogin = function (req, res) {
 	if(req.body.Contact) {
-		User.findOne (
+		Customer.findOne (
 			{'contact': req.body.Contact},
 			'_id name email contact',
 			function(err, user) {
