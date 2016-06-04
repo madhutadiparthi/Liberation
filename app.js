@@ -10,7 +10,7 @@ var routes = require('./routes/index');
 //var users = require('./routes/users');
 var user = require('./routes/user/user');
 var drug = require('./routes/drug/drug');
-var portfolio = require('./routes/drug/portfolio');
+var prescription = require('./routes/drug/prescription');
 var orders = require('./routes/orders/orders');
 
 var app = express();
@@ -40,10 +40,10 @@ app.get('/login', user.login);			//Login Form
 app.post('/login', user.doLogin);		//Login action
 
 
-//USEr DRUG PORTFOLIO ROUTES
-app.get('/portfolio/new', portfolio.create);
-app.post('/portfolio/new', portfolio.doCreate);
-app.get('/portfolio/byuser/:contact', portfolio.byUser);
+//USEr DRUG PRESCRIPTION ROUTES
+app.get('/prescription/new', prescription.create);
+app.post('/prescription/new', prescription.doCreate);
+app.get('/prescription/byuser/:contact', prescription.byUser);
 
 //DRUG ROUTES
 app.get('/drug/new', drug.create);

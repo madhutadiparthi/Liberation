@@ -1,12 +1,12 @@
 var mongoose = require('mongoose');
-var portfolio = mongoose.model('Portfolio');
+var prescription = mongoose.model('Prescription');
 
 //GET user creation form
 exports.create = function(req, res) {
 	if(req.session.loggedIn === true) {
-		res.render('drug/portfolio-form', {
-			title : 'Add Drug to the Portfolio',
-			name: 'myportfolio',
+		res.render('drug/prescription-form', {
+			title : 'Add Drug to the Prescription',
+			name: 'myprescription',
 			//contact: req.session.user.contact,
 			buttonText: "Add!"
 		});
@@ -17,7 +17,7 @@ exports.create = function(req, res) {
 
 //POST new user creation form
 exports.doCreate = function (req, res) {
-	portfolio.create({
+	prescription.create({
 		name: req.body.name,
 		contact: req.session.user.contact,
 		drugName: req.body.DrugName,
@@ -32,29 +32,29 @@ exports.doCreate = function (req, res) {
 		if(err) {
 			console.log(err);
 			if(err.code===11000) {
-				res.redirect('/portfolio/new?exists=true');
+				res.redirect('/prescription/new?exists=true');
 			} else {
 				res.redirect('/?error=true');
 			}
 		}else {
 			//SUCCESS
-			console.log("Drug added to the Portfolio: " + user);
+			console.log("Drug added to the prescription: " + user);
 		}
 	});
 };
 
 exports.byUser = function(req, res) {
-	console.log("Getting user portfolios");
+	console.log("Getting user prescriptions");
 	if(req.params.contact) {
-		portfolio.findByUserContact(
+		prescription.findByUserContact(
 			req.params.contact,
-			function (err, portfolios) {
+			function (err, prescriptions) {
 				if(!err) {
-					console.log(portfolios);
-					res.json(portfolios);
+					console.log(prescriptions);
+					res.json(prescriptions);
 				} else {
 					console.log(err);
-					res.json({"status": "error", "error":"Error finding Portfolios"});
+					res.json({"status": "error", "error":"Error finding prescriptions"});
 				}
 			});
 	} else {

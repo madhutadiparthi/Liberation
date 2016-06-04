@@ -1,6 +1,6 @@
 $(document).ready(function () {
 	var strHTMLOutput = '';
-	$.ajax('/portfolio/byuser/' + contact, {
+	$.ajax('/prescription/byuser/' + contact, {
 		dataType: 'json',
 		error: function () {
 			console.log("ajax error : ()");
@@ -14,14 +14,14 @@ $(document).ready(function () {
 						totalItems = data.length,
 						arrLI = [];
 					for(intItem = totalItems -1; intItem >=0; intItem--) {
-						arrLI.push('<a href="/portfolio/'+data[intItem]._id + '">' + data[intItem].name + "</a");
+						arrLI.push('<a href="/prescription/'+data[intItem]._id + '">' + data[intItem].name + "</a");
 					}
 					strHTMLOutput = "<li>" + arrLI.join('</li><li>') + "</li>";
 				}
 			} else {
-				strHTMLOutput = "<li>You haven't created portfolios yet</li>";
+				strHTMLOutput = "<li>You haven't created prescriptions yet</li>";
 			}
-			$('#myportfolios').html(strHTMLOutput);
+			$('#myprescriptions').html(strHTMLOutput);
 		}
 	});
 });

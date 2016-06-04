@@ -20,7 +20,7 @@ mongoose.connection.on('error', function(err) {
 	console.log('Mongoose connection error: ' + err);
 });
 
-//Take care of reconnecting back when it is discoonected
+//Take care of reconnecting back when it is disconnected
 //unintentionally
 mongoose.connection.on('disconnected', function() {
 	console.log('Mongoose disconnected');
@@ -75,9 +75,9 @@ customerSchema.statics.update = function (userData, callback) {
 mongoose.model('Customer', customerSchema);
 
 /***************************************************************
-USER DRUG PORTFOLIO SCHEMA
+USER DRUG PRESCRIPTION SCHEMA
 ****************************************************************/
-var portfolioSchema =  new mongoose.Schema({
+var prescriptionSchema =  new mongoose.Schema({
 	name: String,
 	contact: Number,
 	drugList: [{
@@ -90,7 +90,7 @@ var portfolioSchema =  new mongoose.Schema({
 	modifiedOn: Date
 });
 
-portfolioSchema.statics.findByUserContact = function (userContact, callback) {
+prescriptionSchema.statics.findByUserContact = function (userContact, callback) {
 	this.find(
 	{ contact: userContact },
 	'_id name',
@@ -99,7 +99,7 @@ portfolioSchema.statics.findByUserContact = function (userContact, callback) {
 };
 
 //Build the User Model
-mongoose.model('Portfolio', portfolioSchema);
+mongoose.model('Prescription', prescriptionSchema);
 
 /***************************************************************
 USER DRUG ORDER SCHEMA
