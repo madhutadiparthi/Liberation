@@ -15,9 +15,10 @@ exports.create = function (req, res) {
 		});
 		
 	}
-	
-	// Create an order matching the database schema
-	/* For example, from Firefox POSTER addon, do this
+
+	/**
+     Create an order matching the database schema  - DONE & TESTED
+	 For example, from a post client
 	   URL = http://localhost:3000/orders/new
 	   TYPE = POST
 	   Data =
@@ -31,7 +32,7 @@ exports.create = function (req, res) {
 			]
 		}
 	<data ends here>
-	 */
+	 **/
 	function createOrder(data, json) {
 	Order.create({
 		orderId: orderId,
@@ -69,8 +70,9 @@ exports.create = function (req, res) {
 
 
 /**
+ 	Get Order by OrderId  - DONE & TESTED
  	Request: 
- 	http://localhost:3000/orders/byorderid?orderId=1
+ 	http://localhost:3000/orders/order/1
   
  	Response
 
@@ -90,10 +92,10 @@ exports.create = function (req, res) {
 	Empty response : [] if there are not matching orders
  */
 exports.byOrderId = function(req, res) {
-	console.log("Getting Order  OrderId = " + req.query.orderId);
-	if(req.query.orderId) {
+	console.log("Getting Order  OrderId = " + req.params.orderId);
+	if(req.params.orderId) {
 		Order.findByOrderId(
-			req.query.orderId,
+			req.params.orderId,
 			function (err, order) {
 				if(!err) {
 					console.log("Order = " + order);
@@ -120,8 +122,8 @@ exports.byOrderId = function(req, res) {
 
 /**
 
-  List my previous orders
-  	Request: http://localhost:3000/orders/byuser?customerContact=9902455333
+  List my previous orders  - DONE & TESTED
+  	Request: http://localhost:3000/orders/customer/9902455333
 
 	Response: 
 	[
@@ -131,14 +133,14 @@ exports.byOrderId = function(req, res) {
 	
 	Empty response : [] if there are not matching orders
 	
-	Ofcourse, you could then extract the orderId from the response and retrieve the order details using the /byorderid API
+	Ofcourse, you could then extract the orderId from the response and retrieve the order details using the /orders/order/:orderid API
 
 */
 exports.byUser = function(req, res) {
-	console.log("Getting Order  for customerContact = " + req.query.customerContact);
-	if(req.query.customerContact) {
+	console.log("Getting Order  for customerContact = " + req.params.customerContact);
+	if(req.params.customerContact) {
 		Order.findByCustomerContact(
-			req.query.customerContact,
+			req.params.customerContact,
 			function (err, orderList) {
 				if(!err) {
 					console.log("Order = " + orderList);
@@ -160,4 +162,120 @@ exports.byUser = function(req, res) {
 		console.log("No order ID supplied");
 		res.send({"status": "error", "error": "No user contact supplied"});
 	}
+};
+
+/**
+
+List Vendor/Customer [with Status] orders  - DONE & TESTED
+	Request: http://localhost:3000/orders/customer/9902455333
+	http://localhost:3000/orders/customer/9902455333/3
+	http://localhost:3000/orders/vendor/918028450292
+	http://localhost:3000/orders/vendor/918028450292/3
+
+	Response: 
+	[
+		{"_id":"5743240fa27be8f92844fde4","orderId":1,"status":3},
+		{"_id":"57432479a27be8f92844fde7","orderId":2,"status":3}
+	]
+	
+	Empty response : [] if there are not matching orders
+	
+	Ofcourse, you could then extract the orderId from the response and retrieve the order details using the /orders/order/:orderid API
+
+*/
+exports.byContact = function(req, res) {
+	console.log("Getting Orders  for customerContact = " + req.params.contact + ", by Status = "+ req.params.status);
+	if(req.params.contact) {
+		var contactType = "vendorContact";
+		if (req.url.includes("customer")) {
+			contactType = "customerContact"
+		}
+		console.log("Contact type is : " + contactType);
+		var jsonParam;
+		if(req.params.status != null) {
+			jsonParam = { [contactType] : req.params.contact, "status":req.params.status};
+		} else {
+			jsonParam = { [contactType] : req.params.contact};
+		}
+		Order.findByStatus(
+			jsonParam,
+			function (err, orderList) {
+				if(!err) {
+					console.log("Order = " + orderList);
+					if (req.accepts('json')) {
+						console.log("Accepting JSON...");
+						res.json(orderList);
+					}
+					else {
+						var orderJSONString = JSON.stringify(orderList);
+						var orderJSON = JSON.parse(orderJSONString);
+						res.render('orders/order-page', {rows : orderJSON});
+					}
+				} else {
+					console.log("Error: " + err);
+					res.json({"status": "error", "error":"Error finding Orders"});
+				}
+			});
+	} else {
+		console.log("No order ID supplied");
+		res.send({"status": "error", "error": "No user contact supplied"});
+	}
+};
+/**
+**
+	Update Order by OrderId  - DONE & TESTED
+	Request: 
+	http://localhost:3000/orders/update/1
+	Post Data:
+	 eg. { "status":"2"}
+
+	Response
+
+[{
+	"_id":"5743240fa27be8f92844fde4",
+	"orderId":1,
+	"customerContact":9902455333,
+	"vendorContact":8023452850,
+	"status":0,
+	"createdOn":"2016-05-23T15:38:55.803Z",
+	"acceptedOrRejectedAt":"2016-06-06T14:37:39.579Z",
+	"transitAt":"2016-06-06T14:37:49.426Z",
+	"drugList":[
+		{"drugName":"Crocin","strength":"250mg","quantity":15,"_id":"5743240fa27be8f92844fde6"},
+		{"drugName":"Dolo","strength":"500mg","quantity":30,"_id":"5743240fa27be8f92844fde5"}
+	]
+}]
+
+Empty response : [] if there are not matching orders
+*/
+
+exports.update = function (req, res) {
+	
+	Order.updateByOrderId({
+		orderId: req.params.orderId,
+		status: req.body.status,
+		res: res
+	}, 
+	function(err, doc) {
+		if(err) {
+			console.log(err);
+			res.redirect('/?error=true');
+		}
+		else {
+			//SUCCESS
+			if (req.accepts('json')) {
+				res.writeHead(200, {'Content-Type': 'application/json'});
+				res.write(JSON.stringify(doc));
+				res.end("'}");
+			}
+			else {
+				res.writeHead(200, {'Content-Type' : 'text/html'});
+				res.write('<html><head/><body>');
+				res.write('<h1>Order Details : ' + JSON.stringify(doc) + '</h1>');
+				res.end('</body>');
+			}			
+		}
+	});
+	
+	
 };

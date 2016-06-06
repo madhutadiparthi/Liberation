@@ -116,11 +116,11 @@ var orderSchema =  new mongoose.Schema({
 	createdOn: {type: Date, default: Date.now},
 	acceptedOrRejectedAt: Date,
 	transitAt: Date,
-	deiveredAt: Date,
+	deliveredAt: Date,
 	status: Number // Enum: 0 = new, 1 = accepted, 2 = transit, 3 = delivered, -1 = rejected
 });
 
-//Find user orders to show on 'My Orders' screen
+//Find user orders to show on 'My Orders' screen - DONE & TESTED
 orderSchema.statics.findByCustomerContact = function (customerContact, callback) {
 	this.find(
 	{ customerContact: customerContact },
@@ -129,7 +129,7 @@ orderSchema.statics.findByCustomerContact = function (customerContact, callback)
 	callback);
 };
 
-//Find user orders - to show on an order detail screen for a customer or a vendor
+//Find user orders - to show on an order detail screen for a customer or a vendor - DONE & TESTED
 orderSchema.statics.findByOrderId = function (orderId, callback) {
 	this.find(
 	{ orderId: orderId },
@@ -138,6 +138,52 @@ orderSchema.statics.findByOrderId = function (orderId, callback) {
 	callback);
 };
 
+//Find user orders with status new - to show on orders list by status to a vendor - DONE & TESTED
+orderSchema.statics.findByStatus = function (query, callback) {
+	console.log("params : " + JSON.stringify(query));
+	this.find(   query,
+				'orderId status',
+				{sort: 'orderId'},
+				callback);
+};
+
+// Update Order status - DONE & TESTED
+orderSchema.statics.updateByOrderId = function (orderData, callback) {
+	
+	console.log("order id = " + orderData.orderId);
+	var date = Date.now();
+	if ( (orderData.status === "1") || (orderData.status === "-1") ) {
+		this.findOneAndUpdate(
+				{ orderId: orderData.orderId },
+				{$set : {status: orderData.status,
+					acceptedOrRejectedAt: Date.now()
+					}
+				}, 
+				{new: true},
+				callback);
+	} else if (orderData.status === "2") {
+		this.findOneAndUpdate(
+				{ orderId: orderData.orderId },
+				{$set : {status: orderData.status,
+					transitAt: Date.now()
+					}
+				}, 
+				{new: true},
+				callback); 
+	} else if (orderData.status === "3") {
+		this.findOneAndUpdate(
+				{ orderId: orderData.orderId },
+				{$set : {status: orderData.status,
+					deliveredAt: Date.now()
+					}
+				}, 
+				{new: true},
+				callback); 
+	} else {
+		callback;
+	}
+	
+};
 
 //Build the User Model
 mongoose.model('Order', orderSchema);
