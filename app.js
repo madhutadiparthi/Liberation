@@ -49,15 +49,16 @@ app.get('/prescription/byuser/:contact', prescription.byUser);
 app.get('/drug/new', drug.create);
 app.post('/drug/new', drug.doCreate);
 
-// ORDER ROUTES
+// ORDER ROUTES - DONE & TESTED
 app.post('/orders/new', orders.create);
+app.post('/orders/update/:orderId', orders.update);
 app.get('/orders/customer/:customerContact', orders.byUser);
 app.get('/orders/order/:orderId', orders.byOrderId);
 app.get('/orders/customer/:contact/:status', orders.byContact);
 app.get('/orders/vendor/:contact/:status', orders.byContact);
 app.get('/orders/customer/:contact', orders.byContact);
 app.get('/orders/vendor/:contact', orders.byContact);
-app.post('/orders/update/:orderId', orders.update);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
