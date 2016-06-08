@@ -81,3 +81,65 @@ exports.doLogin = function (req, res) {
 		res.redirect('/login?404=error');
 	}
 };
+
+exports.profile = function (req, res) {
+	console.log("Getting customer profile using  contact = " + req.params.contact);
+	if(req.params.contact) {
+		Customer.findByContact(
+			req.params.contact,
+			function (err, profile) {
+				if(!err) {
+					console.log("customer profile = " + profile);
+					if (req.accepts('json')) {
+						console.log("Accepting JSON...");
+						res.json(profile);
+					}
+					else {
+						var profileJSONString = JSON.stringify(profile);
+						var profileJSON = JSON.parse(profileJSONString);
+						console.log('Contact:---> ' + profileJSON[0].contact);
+						res.render('user/prifile', {rows : profileJSON});
+					}
+				} else {
+					console.log("Error: " + err);
+					res.json({"status": "error", "error":"Error finding Orders"});
+				}
+			});
+	} else {
+		console.log("No user contact supplied");
+		res.send({"status": "error", "error": "No contact supplied"});
+	}
+};
+
+exports.udpate = function (data, res) {
+	console.log('customerJS, update: ' + data.contact);
+	Customer.update({
+		name: data.name,
+		contact: data.contact,
+		email: data.email,
+		address :  data.address,
+		prefVendCont: data.prefVendCont,
+		modifiedOn: data.modifiedOn,
+		lastLogin: data.lastLogin
+	}, 
+	function(err, doc) {
+		if(err) {
+			console.log(err);
+			res.redirect('/?error=true');
+		}
+		else {
+			//SUCCESS
+			if (req.accepts('json')) {
+				res.writeHead(200, {'Content-Type': 'application/json'});
+				res.write(JSON.stringify(doc));
+				res.end("'}");
+			}
+			else {
+				res.writeHead(200, {'Content-Type' : 'text/html'});
+				res.write('<html><head/><body>');
+				res.write('<h1>Customer Details : ' + JSON.stringify(doc) + '</h1>');
+				res.end('</body>');
+			}			
+		}
+	});
+};

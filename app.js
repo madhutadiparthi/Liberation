@@ -7,8 +7,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var routes = require('./routes/index');
-//var users = require('./routes/users');
-var user = require('./routes/user/user');
+var customer = require('./routes/user/customer');
 var drug = require('./routes/drug/drug');
 var prescription = require('./routes/drug/prescription');
 var orders = require('./routes/orders/orders');
@@ -32,15 +31,15 @@ app.use('/', routes);
 //app.use('/users', users);
 
 //USER ROUTES
-app.get('/user', user.index);		//Current user profile
-app.get('/user/new', user.create);	//Create new user form
-app.post('/user/new', user.doCreate);	//Create new user action
+app.get('/user', customer.index);		//Current user profile
+app.get('/user/new', customer.create);	//Create new user form
+app.post('/user/new', customer.doCreate);	//Create new user action
+app.get('/login', customer.login);			//Login Form
+app.post('/login', customer.doLogin);		//Login action
+app.get('/user/profile/:contact', customer.profile);	//Get csutomer profile
+app.post('/user/update/:contact', customer.udpate);		//Update customer profile
 
-app.get('/login', user.login);			//Login Form
-app.post('/login', user.doLogin);		//Login action
-
-
-//USEr DRUG PRESCRIPTION ROUTES
+//USER DRUG PRESCRIPTION ROUTES
 app.get('/prescription/new', prescription.create);
 app.post('/prescription/new', prescription.doCreate);
 app.get('/prescription/byuser/:contact', prescription.byUser);

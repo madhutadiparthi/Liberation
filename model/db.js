@@ -43,32 +43,35 @@ var customerSchema =  new mongoose.Schema({
 	contact: Number,
 	email: {type: String, unique:true},
 	address: String,
+	prefVendCont: Number,
 	createdOn: {type: Date, default: Date.now},
 	modifiedOn: Date,
 	lastLogin: Date
 });
 
 //Get the customer details using contact
-customerSchema.statics.findByCustomerContact = function (contact, callback) {
+customerSchema.statics.findByContact = function (contact, callback) {
 	this.find(
 	{ contact: contact },
-	'name contact email address',
+	'name contact email address prefVendCont lastLogin',
 	{sort: 'name'},
 	callback);
 };
 
 //Update customer profile
-customerSchema.statics.update = function (userData, callback) {
-	this.update(
-	{ contact: userData.contact },
-	{$set : {name: userData.name,
-			 contact: userData.contact,
-			 email : userData.email,
-			 address : userData.address,
-			 modifiedOn: userData.modifiedOn,
-			 lastLogin: userData.lastLogin
+customerSchema.statics.update = function (customerData, callback) {
+	console.log("customer profile update : " + JSON.stringify(customerData));
+	this.findOneAndUpdate(
+	{ contact: customerData.contact },
+	{$set : {name: customerData.name,
+			 email : customerData.email,
+			 address : customerData.address,
+			 prefVendCont: customerData.prefVendCont,
+			 modifiedOn: customerData.modifiedOn,
+			 lastLogin: customerData.lastLogin
 		}
 	},
+	{new: true},
 	callback);
 };
 //Build the Customer  Model
@@ -151,7 +154,6 @@ orderSchema.statics.findByStatus = function (query, callback) {
 orderSchema.statics.updateByOrderId = function (orderData, callback) {
 	
 	console.log("order id = " + orderData.orderId);
-	var date = Date.now();
 	if ( (orderData.status === "1") || (orderData.status === "-1") ) {
 		this.findOneAndUpdate(
 				{ orderId: orderData.orderId },
