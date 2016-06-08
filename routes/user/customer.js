@@ -111,16 +111,41 @@ exports.profile = function (req, res) {
 	}
 };
 
-exports.udpate = function (data, res) {
-	console.log('customerJS, update: ' + data.contact);
+/**
+   URL: https://localhost:3000/users/update/9902455333
+   Headers : Content-Type: application/json   &&   Accept: application/json
+   Post Data: 
+       MIME-Type : application/json
+       
+       { "name" : "Ashish K Mathur", 
+       "contact" : 9902455333, 
+       "email" : "reachashishmathur@gmail.com",
+       "prefVendCont": 918028450292 
+       }
+
+ */
+exports.udpate = function (req, res) {
+	console.log('customerJS, update: ' + req.params.contact);
+	console.log('customerJS, update: Document = ' + JSON.stringify(req.body));
+	// TODO Validate data sent for missing data. Hate to update the database with bad data if what was sent was bad
+	// If the contact sent was either incorrect(we didn't find the user in our database), bad format (not a number) or empty, 
+	//    then we have to make sure we do the right thing. Either we can make sure the client sends all the data properly 
+	//    and in proper format OR fix it here if something is bad.
+	// For now, I have updated the method doc to show a sample that will work, assuming the contact is there in the database
+	// Need to take care of the following
+	//   0. Validate all data and report errors back before calling the DB methods. Need to have default acceptable values.
+	//   1. What if we don't find the contact in the database, we should create it
+	//   2. What if the phone numbers are not really numbers, then we need to report and error with expected format
+	//   3. What if data is missing from the body that was sent, we dont want to put 'undefined' in the database. We should check.
+	//   4. What format should we pass the data from the client to the server? For now I am setting it to now()
 	Customer.update({
-		name: data.name,
-		contact: data.contact,
-		email: data.email,
-		address :  data.address,
-		prefVendCont: data.prefVendCont,
-		modifiedOn: data.modifiedOn,
-		lastLogin: data.lastLogin
+		contact: req.params.contact,
+		name: req.body.name,
+		email: req.body.email,
+		address :  req.body.address,
+		prefVendCont: req.body.prefVendCont,
+		modifiedOn: Date.now(),
+		lastLogin: Date.now()
 	}, 
 	function(err, doc) {
 		if(err) {
@@ -130,6 +155,7 @@ exports.udpate = function (data, res) {
 		else {
 			//SUCCESS
 			if (req.accepts('json')) {
+				console.log("Success");
 				res.writeHead(200, {'Content-Type': 'application/json'});
 				res.write(JSON.stringify(doc));
 				res.end("'}");
