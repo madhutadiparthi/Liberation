@@ -31,13 +31,19 @@ app.use('/', routes);
 //app.use('/users', users);
 
 //USER ROUTES
-app.get('/user', customer.index);		//Current user profile
-app.get('/user/new', customer.create);	//Create new user form
-app.post('/user/new', customer.doCreate);	//Create new user action
+// Forms
+//app.get('/customer', customer.index);		//Current user profile
+//app.get('/customer/new', customer.create);	//Create new user form
+
+
 app.get('/login', customer.login);			//Login Form
-app.post('/login', customer.doLogin);		//Login action
-app.get('/user/profile/:contact', customer.profile);	//Get csutomer profile
-app.post('/user/update/:contact', customer.udpate);		//Update customer profile
+app.post('/login/:contact', customer.doLogin);		//Login action
+
+// Services
+app.post('/customer/new', customer.create);	//Create new user action
+app.get('/customer/:contact', customer.profile);	//Get customer profile
+app.post('/customer/update/:contact', customer.udpate);		//Update customer profile
+app.post('/customer/login/:contact', customer.doLogin);		//Login action
 
 //USER DRUG PRESCRIPTION ROUTES
 app.get('/prescription/new', prescription.create);

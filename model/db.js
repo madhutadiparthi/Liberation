@@ -40,8 +40,8 @@ CUSTOMER SCHEMA
 ****************************************************************/
 var customerSchema =  new mongoose.Schema({
 	name: String,
-	contact: Number,
-	email: {type: String, unique:true},
+	contact: {type: Number, unique: true, index: true},
+	email: String,
 	address: String,
 	prefVendCont: Number,
 	createdOn: {type: Date, default: Date.now},
@@ -51,7 +51,7 @@ var customerSchema =  new mongoose.Schema({
 
 //Get the customer details using contact
 customerSchema.statics.findByContact = function (contact, callback) {
-	this.find(
+	this.findOne(
 	{ contact: contact },
 	'name contact email address prefVendCont lastLogin',
 	{sort: 'name'},
