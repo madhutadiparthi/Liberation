@@ -39,8 +39,8 @@ mongoose.connection.on('SIGINT', function() {
 CUSTOMER SCHEMA
 ****************************************************************/
 var customerSchema =  new mongoose.Schema({
+	contact: {type: Number, unique: true, require: true},
 	name: String,
-	contact: {type: Number, unique: true, index: true},
 	email: String,
 	address: String,
 	prefVendCont: Number,
