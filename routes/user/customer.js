@@ -24,21 +24,21 @@ exports.create = function(req, res) {
 
 	function registerCustomer() {
 		Customer.create({
-			name : req.body.FullName,
-			contact : req.body.Contact,
-			email : req.body.Email,
+			name : req.body.name,
+			contact : req.body.contact,
+			email : req.body.email,
 			modifiedOn : Date.now(),
 			lastLogin : Date.now()
 		}, function(err, user) {
 			if (err) {
 				// An error in creating a customer
 				if (req.accepts('json')) {
-					res.json({'code' : 501, 'message' : 'Failed to register customer', 'contact' : req.body.Contact});
+					res.json({'code' : 501, 'message' : 'Failed to register customer', 'contact' : req.body.contact});
 				} else {
 					// TODO Use res.render
 					res.writeHead(501, {'Content-Type' : 'text/html'});
 					res.write('<html><head/><body>');
-					res.write('Error registering customer: ' + req.body.Contact);
+					res.write('Error registering customer: ' + req.body.contact);
 					res.end('</body>');
 				}
 				console.log("Customer created and saved: " + user);
@@ -65,13 +65,15 @@ exports.create = function(req, res) {
 	}
 
 	function createIfNotExists(registerCustomer) {
-		Customer.findByContact(req.body.Contact, function(err, user) {
+		Customer.findByContact(req.body.contact, function(err, user) {
 			if (err || user === null || user.length === 0) {
 				// Register a new customer
+				console.log("Register customer : " + req.body.contact);
 				registerCustomer();
 			} else {
 				// report that the user already exists
 				// Its much cleaner this way
+				console.log("customer registered: " + req.body.contact);
 				res.json({
 					"code" : 200,
 					"message" : "Customer is already registered: ",
