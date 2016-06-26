@@ -213,7 +213,9 @@ mongoose.model('Drug', drugSchema);
 var vendorSchema = new mongoose.Schema({
 	name: String,
 	shopName: String,
-	contact : [Number],
+	email: String,
+	contact : Number,
+	/*otherContacts: [Number],
 	addrress: {shopNum: String,
 		buildingName: String,
 		street: String,
@@ -222,7 +224,7 @@ var vendorSchema = new mongoose.Schema({
 		state: String,
 		pincode: Number 
 		},
-	regId: String,
+	regId: String,*/
 	createdOn: {type: Date, default: Date.now},
 	modifiedOn: Date,
 	lastLogin: Date

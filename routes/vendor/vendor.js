@@ -1,16 +1,15 @@
 var mongoose = require('mongoose');
-var Customer = mongoose.model('Customer');
+var Vendor = mongoose.model('Vendor');
 
 /**
- * Create a customer matching the database schema - DONE & TESTED 
- For example, from a post client URL = http://localhost:3000/customer/new
- TYPE = POST Data =
+ * Create a Vendor matching the database schema - DONE & TESTED 
+ For example, from a post client URL = http://localhost:3000/customer/new T
+ YPE = POST Data =
  <data starts here> 
  	{
  		"name":"Madhu Tadiparthi", 
  		"contact": 9448756530,
-		"email":"madhut00@gmail.com",
-		"prefVendCont": 918028450292 
+		"email":"madhut00@gmail.com" 
 	} 
 	<data ends here>
  Return:
@@ -21,36 +20,50 @@ var Customer = mongoose.model('Customer');
  		- 
  */
 exports.create = function(req, res) {
-
+	console.log("contact is : " + req.body.contact);
+	console.log("Name is : " + req.body.name);
+	console.log("email is : " + req.body.email);
+	var address = req.body.address != null ? req.body.address : "";
+	
+	var prefVendCont = req.body.prefVendCont != null ? req.body.prefVendCont : 0;
+	
 	function registerCustomer() {
+		console.log("Address is :" + address );
+		console.log("Vendor cont is " + prefVendCont);
 		Customer.create({
-			name : req.body.FullName,
-			contact : req.body.Contact,
-			email : req.body.Email,
+			name : req.body.name,
+			contact : req.body.contact,
+			email : req.body.email,
+			address : address,
+			prefVendCont: prefVendCont,
 			modifiedOn : Date.now(),
 			lastLogin : Date.now()
 		}, function(err, user) {
 			if (err) {
 				// An error in creating a customer
 				if (req.accepts('json')) {
-					res.json({'code' : 501, 'message' : 'Failed to register customer', 'contact' : req.body.Contact});
+					res.writeHead(501, {'Content-Type' : 'application/json'});
+					res.end(JSON.stringify({"code" : 501, "message" : "Failed to register customer", "contact" : req.body.contact}));
 				} else {
 					// TODO Use res.render
 					res.writeHead(501, {'Content-Type' : 'text/html'});
 					res.write('<html><head/><body>');
-					res.write('Error registering customer: ' + req.body.Contact);
+					res.write('Error registering customer: ' + req.body.contact);
 					res.end('</body>');
 				}
-				console.log("Customer created and saved: " + user);
+				console.log("Customer created and saved: " + err);
 
 			} else {
 				// Let them know it was successfully created
 				if (req.accepts('json')) {
-					res.json({
+					res.writeHead(200, {
+						'Content-Type' : 'application/json'
+					});
+					res.end(JSON.stringify({
 						"code" : 200,
 						"message" : "Customer created successfully!",
 						"contact" : user.contact
-					});
+					}));
 				} else {
 					res.writeHead(200, {
 						'Content-Type' : 'text/html'
@@ -65,18 +78,21 @@ exports.create = function(req, res) {
 	}
 
 	function createIfNotExists(registerCustomer) {
-		Customer.findByContact(req.body.Contact, function(err, user) {
+		Customer.findByContact(req.body.contact, function(err, user) {
 			if (err || user === null || user.length === 0) {
 				// Register a new customer
 				registerCustomer();
 			} else {
 				// report that the user already exists
 				// Its much cleaner this way
-				res.json({
+				res.writeHead(200, {
+					'Content-Type' : 'application/json'
+				});
+				res.end(JSON.stringify({
 					"code" : 200,
 					"message" : "Customer is already registered: ",
 					"contact" : user.contact
-				});
+				}));
 
 			}
 		});
@@ -116,23 +132,23 @@ exports.login = function(req, res) {
 };
 
 exports.doLogin = function(req, res) {
-	if (req.body.Contact) {
+	if (req.params.contact) {
 		Customer.findOne({
-			'contact' : req.body.Contact
+			'contact' : req.params.contact
 		}, '_id name email contact', function(err, user) {
 			if (!err) {
 				if (!user) {
 					res.redirect('/login?404=user');
 				} else {
-					req.session.user = {
-						"name" : user.name,
-						"contact" : user.contact,
-						"email" : user.email,
-						"_id" : user._id
-					};
+					res.writeHead(200, {
+						'Content-Type' : 'text/html'
+					});
+					res.write('<html><head/><body>');
+					res.write(JSON.stringify(user));
+					res.end('</body>');
 					req.session.loggedIn = true;
 					console.log('Logged in user: ' + user);
-					res.redirect('/user');
+					//res.redirect('/user');
 				}
 			} else {
 				res.redirect('/login?404=error');
@@ -142,6 +158,16 @@ exports.doLogin = function(req, res) {
 		res.redirect('/login?404=error');
 	}
 };
+
+/**
+ * Get the customer profile - Done & Tested
+ URL: https://localhost:3000/customer/9902455333 
+ Headers : 
+ 	Content-Type: application/json && 
+ 	Accept: application/json 
+ 	}
+ Return: customer record
+ */
 
 exports.profile = function(req, res) {
 	console.log("Getting customer profile using  contact = " + req.params.contact);
@@ -184,6 +210,7 @@ exports.profile = function(req, res) {
 };
 
 /**
+ * Updates the customer profile - Done & Tested
  URL: https://localhost:3000/users/update/9902455333 
  Headers : 
  	Content-Type: application/json && 
@@ -236,13 +263,18 @@ exports.udpate = function(req, res) {
 			// SUCCESS
 			if (req.accepts('json')) {
 				console.log("Success");
-				res.json(doc);
+				res.writeHead(200, {
+					'Content-Type' : 'application/json'
+				});
+				res.write(JSON.stringify(doc));
+				res.end("'}");
 			} else {
 				res.writeHead(200, {
 					'Content-Type' : 'text/html'
 				});
 				res.write('<html><head/><body>');
-				res.write('<h1>Customer Details : ' + JSON.stringify(doc) + '</h1>');
+				res.write('<h1>Customer Details : ' + JSON.stringify(doc)
+						+ '</h1>');
 				res.end('</body>');
 			}
 		}
