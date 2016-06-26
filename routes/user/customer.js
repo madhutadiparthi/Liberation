@@ -3,8 +3,8 @@ var Customer = mongoose.model('Customer');
 
 /**
  * Create a customer matching the database schema - DONE & TESTED 
- For example, from a post client URL = http://localhost:3000/customer/new T
- YPE = POST Data =
+ For example, from a post client URL = http://localhost:3000/customer/new
+ TYPE = POST Data =
  <data starts here> 
  	{
  		"FullName":"Madhu Tadiparthi", 
@@ -32,8 +32,7 @@ exports.create = function(req, res) {
 			if (err) {
 				// An error in creating a customer
 				if (req.accepts('json')) {
-					res.writeHead(501, {'Content-Type' : 'application/json'});
-					res.end(JSON.stringify({"code" : 501, "message" : "Failed to register customer", "contact" : req.body.Contact}));
+					res.json({'code' : 501, 'message' : 'Failed to register customer', 'contact' : req.body.Contact});
 				} else {
 					// TODO Use res.render
 					res.writeHead(501, {'Content-Type' : 'text/html'});
@@ -46,14 +45,11 @@ exports.create = function(req, res) {
 			} else {
 				// Let them know it was successfully created
 				if (req.accepts('json')) {
-					res.writeHead(200, {
-						'Content-Type' : 'application/json'
-					});
-					res.end(JSON.stringify({
+					res.json({
 						"code" : 200,
 						"message" : "Customer created successfully!",
 						"contact" : user.contact
-					}));
+					});
 				} else {
 					res.writeHead(200, {
 						'Content-Type' : 'text/html'
@@ -75,14 +71,11 @@ exports.create = function(req, res) {
 			} else {
 				// report that the user already exists
 				// Its much cleaner this way
-				res.writeHead(200, {
-					'Content-Type' : 'application/json'
-				});
-				res.end(JSON.stringify({
+				res.json({
 					"code" : 200,
 					"message" : "Customer is already registered: ",
 					"contact" : user.contact
-				}));
+				});
 
 			}
 		});
@@ -242,18 +235,13 @@ exports.udpate = function(req, res) {
 			// SUCCESS
 			if (req.accepts('json')) {
 				console.log("Success");
-				res.writeHead(200, {
-					'Content-Type' : 'application/json'
-				});
-				res.write(JSON.stringify(doc));
-				res.end("'}");
+				res.json(doc);
 			} else {
 				res.writeHead(200, {
 					'Content-Type' : 'text/html'
 				});
 				res.write('<html><head/><body>');
-				res.write('<h1>Customer Details : ' + JSON.stringify(doc)
-						+ '</h1>');
+				res.write('<h1>Customer Details : ' + JSON.stringify(doc) + '</h1>');
 				res.end('</body>');
 			}
 		}

@@ -23,47 +23,46 @@ exports.create = function (req, res) {
 	   TYPE = POST
 	   Data =
 	   <data starts here>
-	 	{
-			"customerContact" : "9902455333", 
-			"vendorContact" : 918028450292, 
-			"drugList": [
-  				{"drugName":"Dolo", "strength":"650mg", "quantity":"15"},
-  				{"drugName":"Saridon","strngth":"500mg","quantity":"30"}
-			]
-		}
+		 	{
+				"customerContact" : "9902455333", 
+				"vendorContact" : 918028450292, 
+				"drugList": [
+	  				{"drugName":"Dolo", "strength":"650mg", "quantity":"15"},
+	  				{"drugName":"Saridon","strength":"500mg","quantity":"30"}
+				]
+			}
 	<data ends here>
 	 **/
 	function createOrder(data, json) {
-	Order.create({
-		orderId: orderId,
-		customerContact: data.customerContact,
-		vendorContact: data.vendorContact,
-		drugList: data.drugList,
-		createdOn: Date.now(),
-		status: 0
-	}, function(err, orderData) {
-		if(err) {
-			console.log(err);
-			res.redirect('/?error=true');
+	Order.create(
+			{
+				orderId: orderId,
+				customerContact: data.customerContact,
+				vendorContact: data.vendorContact,
+				drugList: data.drugList,
+				createdOn: Date.now(),
+				status: 0
+			}, 
+			function(err, orderData) {
+				if(err) {
+					console.log(err);
+					res.redirect('/?error=true');
+				}
+				else {
+					//SUCCESS
+					console.log("Order created and saved: " + orderData);
+					if (json) {
+						res.json({'orderId': orderId});
+					}
+					else {
+						res.writeHead(200, {'Content-Type' : 'text/html'});
+						res.write('<html><head/><body>');
+						res.write('<h1>Order Id : ' + orderId + '</h1>');
+						res.end('</body>');
+					}
+				}
+			});
 		}
-		else {
-			//SUCCESS
-			if (json) {
-				res.writeHead(200, {'Content-Type': 'application/json'});
-				res.write("{'orderId':'");
-				res.write("" + orderId);
-				res.end("'}");
-			}
-			else {
-				res.writeHead(200, {'Content-Type' : 'text/html'});
-				res.write('<html><head/><body>');
-				res.write('<h1>Order Id : ' + orderId + '</h1>');
-				res.end('</body>');
-			}
-			console.log("Order created and saved: " + orderData);
-		}
-	});
-	}
 	
 	getNextOrderId(createOrder, req.body, req.accepts('json'));
 };
@@ -185,17 +184,22 @@ List Vendor/Customer [with Status] orders  - DONE & TESTED
 */
 exports.byContact = function(req, res) {
 	console.log("Getting Orders  for customerContact = " + req.params.contact + ", by Status = "+ req.params.status);
-	if(req.params.contact) {
+	if (req.params.contact) {
 		var contactType = "vendorContact";
 		if (req.url.includes("customer")) {
-			contactType = "customerContact"
+			contactType = "customerContact";
 		}
 		console.log("Contact type is : " + contactType);
 		var jsonParam;
-		if(req.params.status != null) {
-			jsonParam = { [contactType] : req.params.contact, "status":req.params.status};
+		if(req.params.status !== null) {
+			jsonParam = { 
+					[contactType] : req.params.contact, 
+					'status':req.params.status
+					};
 		} else {
-			jsonParam = { [contactType] : req.params.contact};
+			jsonParam = { 
+					[contactType] : req.params.contact
+					};
 		}
 		Order.findByStatus(
 			jsonParam,
@@ -264,9 +268,7 @@ exports.update = function (req, res) {
 		else {
 			//SUCCESS
 			if (req.accepts('json')) {
-				res.writeHead(200, {'Content-Type': 'application/json'});
-				res.write(JSON.stringify(doc));
-				res.end("'}");
+				res.json(doc);
 			}
 			else {
 				res.writeHead(200, {'Content-Type' : 'text/html'});
@@ -276,6 +278,4 @@ exports.update = function (req, res) {
 			}			
 		}
 	});
-	
-	
 };

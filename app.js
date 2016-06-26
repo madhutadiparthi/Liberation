@@ -28,14 +28,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({secret:"samplesession", resave: true, saveUninitialized: false}));
 
 app.use('/', routes);
-//app.use('/users', users);
 
 //USER ROUTES
-// Forms
-//app.get('/customer', customer.index);		//Current user profile
-//app.get('/customer/new', customer.create);	//Create new user form
-
-
 app.get('/login', customer.login);			//Login Form
 app.post('/login/:contact', customer.doLogin);		//Login action
 
