@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var routes = require('./routes/index');
 var customer = require('./routes/user/customer');
+var vendor = require('./routes/vendor/vendor');
 var drug = require('./routes/drug/drug');
 var prescription = require('./routes/drug/prescription');
 var orders = require('./routes/orders/orders');
@@ -33,11 +34,18 @@ app.use('/', routes);
 app.get('/login', customer.login);			//Login Form
 app.post('/login/:contact', customer.doLogin);		//Login action
 
-// Services
-app.post('/customer/new', customer.create);	//Create new user action
+//CUSTOMER Services
+app.post('/customer/new', customer.create);	//Register new customer
 app.get('/customer/:contact', customer.profile);	//Get customer profile
 app.post('/customer/update/:contact', customer.udpate);		//Update customer profile
 app.post('/customer/login/:contact', customer.doLogin);		//Login action
+
+
+//VENDORServices
+app.post('/vendor/new', vendor.create);	//Register new vendor
+app.get('/vendor/:contact', vendor.profile);	//Get vendor profile
+app.post('/vendor/update/:contact', vendor.udpate);		//Update vendor profile
+//app.post('/vendor/login/:contact', vendor.doLogin);		//Login action
 
 //USER DRUG PRESCRIPTION ROUTES
 app.get('/prescription/new', prescription.create);

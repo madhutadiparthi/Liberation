@@ -186,7 +186,7 @@ exports.profile = function(req, res) {
 };
 
 /**
- URL: https://localhost:3000/users/update/9902455333 
+ URL: https://localhost:3000/customer/update/9902455333 
  Headers : 
  	Content-Type: application/json && 
  	Accept: application/json 
