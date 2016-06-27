@@ -205,7 +205,7 @@ exports.byContact = function(req, res) {
 			jsonParam,
 			function (err, orderList) {
 				if(!err) {
-					console.log("Order = " + orderList);
+					console.log("Order = " + JSON.stringify(orderList));
 					if (req.accepts('json')) {
 						console.log("Accepting JSON...");
 						res.json(orderList);

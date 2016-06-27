@@ -134,7 +134,7 @@ orderSchema.statics.findByCustomerContact = function (customerContact, callback)
 
 //Find user orders - to show on an order detail screen for a customer or a vendor - DONE & TESTED
 orderSchema.statics.findByOrderId = function (orderId, callback) {
-	this.find(
+	this.findOne(
 	{ orderId: orderId },
 	'orderId status customerContact vendorContact createdOn drugList',
 	{sort: 'orderId'},
