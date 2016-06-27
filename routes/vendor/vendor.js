@@ -7,15 +7,15 @@ var Vendor = mongoose.model('Vendor');
  YPE = POST Data =
  <data starts here> 
  	{
- 		"name":"Madhu Tadiparthi", 
- 		"contact": 9448756530,
-		"email":"madhut00@gmail.com" 
+ 		"name":"Madhu medicals", 
+ 		"contact": 1234567890,
+		"email":"madhumedicals@gmail.com" 
 	} 
 	<data ends here>
  Return:
- 	- Success: JSON representation of the customer
+ 	- Success: JSON representation of the vendor
  	- Failure:
- 		- Customer already exists
+ 		- Vendor already exists
  		- bad contact provided (its not a number)
  		- 
  */
@@ -25,17 +25,13 @@ exports.create = function(req, res) {
 	console.log("email is : " + req.body.email);
 	var address = req.body.address != null ? req.body.address : "";
 	
-	var prefVendCont = req.body.prefVendCont != null ? req.body.prefVendCont : 0;
-	
-	function registerCustomer() {
+	function registerVendor() {
 		console.log("Address is :" + address );
-		console.log("Vendor cont is " + prefVendCont);
-		Customer.create({
+		Vendor.create({
 			name : req.body.name,
 			contact : req.body.contact,
 			email : req.body.email,
 			address : address,
-			prefVendCont: prefVendCont,
 			modifiedOn : Date.now(),
 			lastLogin : Date.now()
 		}, function(err, user) {
@@ -43,15 +39,15 @@ exports.create = function(req, res) {
 				// An error in creating a customer
 				if (req.accepts('json')) {
 					res.writeHead(501, {'Content-Type' : 'application/json'});
-					res.end(JSON.stringify({"code" : 501, "message" : "Failed to register customer", "contact" : req.body.contact}));
+					res.end(JSON.stringify({"code" : 501, "message" : "Failed to register vendor", "contact" : req.body.contact}));
 				} else {
 					// TODO Use res.render
 					res.writeHead(501, {'Content-Type' : 'text/html'});
 					res.write('<html><head/><body>');
-					res.write('Error registering customer: ' + req.body.contact);
+					res.write('Error registering vendor: ' + req.body.contact);
 					res.end('</body>');
 				}
-				console.log("Customer created and saved: " + err);
+				console.log("Vendor created and saved: " + err);
 
 			} else {
 				// Let them know it was successfully created
@@ -61,7 +57,7 @@ exports.create = function(req, res) {
 					});
 					res.end(JSON.stringify({
 						"code" : 200,
-						"message" : "Customer created successfully!",
+						"message" : "Vendor created successfully!",
 						"contact" : user.contact
 					}));
 				} else {
@@ -72,16 +68,16 @@ exports.create = function(req, res) {
 					res.write(JSON.stringify(user));
 					res.end('</body>');
 				}
-				console.log("Customer created and saved: " + user);
+				console.log("Vendor created and saved: " + user);
 			}
 		});
 	}
 
-	function createIfNotExists(registerCustomer) {
-		Customer.findByContact(req.body.contact, function(err, user) {
+	function createIfNotExists(registerVendor) {
+		Vendor.findByContact(req.body.contact, function(err, user) {
 			if (err || user === null || user.length === 0) {
 				// Register a new customer
-				registerCustomer();
+				registerVendor();
 			} else {
 				// report that the user already exists
 				// Its much cleaner this way
@@ -98,88 +94,30 @@ exports.create = function(req, res) {
 		});
 	}
 
-	createIfNotExists(registerCustomer);
-};
-
-// GET Customer creation form
-exports.index = function(req, res) {
-	if (req.session.loggedIn === true) {
-		res.render('user/user-page', {
-			title : req.session.user.name,
-			name : req.session.user.name,
-			contact : req.session.user.contact,
-			email : req.session.user.email,
-			userID : req.session.user._id
-		});
-	} else {
-		res.redirect('/login');
-	}
-};
-
-// GET Customer creation form
-exports.createHTML = function(req, res) {
-	res.render('user/user-form', {
-		title : 'Create user',
-		buttonText : "Join!"
-	});
-};
-
-
-exports.login = function(req, res) {
-	res.render('user/login-form', {
-		title : 'Log in'
-	});
-};
-
-exports.doLogin = function(req, res) {
-	if (req.params.contact) {
-		Customer.findOne({
-			'contact' : req.params.contact
-		}, '_id name email contact', function(err, user) {
-			if (!err) {
-				if (!user) {
-					res.redirect('/login?404=user');
-				} else {
-					res.writeHead(200, {
-						'Content-Type' : 'text/html'
-					});
-					res.write('<html><head/><body>');
-					res.write(JSON.stringify(user));
-					res.end('</body>');
-					req.session.loggedIn = true;
-					console.log('Logged in user: ' + user);
-					//res.redirect('/user');
-				}
-			} else {
-				res.redirect('/login?404=error');
-			}
-		});
-	} else {
-		res.redirect('/login?404=error');
-	}
+	createIfNotExists(registerVendor);
 };
 
 /**
- * Get the customer profile - Done & Tested
- URL: https://localhost:3000/customer/9902455333 
+ * Get the vendor profile - Done & Tested
+ URL: https://localhost:3000/vednor/9902455333 
  Headers : 
  	Content-Type: application/json && 
  	Accept: application/json 
  	}
- Return: customer record
+ Return: vendor record
  */
 
 exports.profile = function(req, res) {
-	console.log("Getting customer profile using  contact = " + req.params.contact);
+	console.log("Getting vednor profile using  contact = " + req.params.contact);
 	if (req.params.contact) {
-		Customer.findByContact(req.params.contact, function(err, profile) {
+		Vendor.findByContact(req.params.contact, function(err, profile) {
 			if (!err) {
 				
 				if (profile === null) {
-					res.json({"status":"failed", "Message":"Failed to find a customer with contact = " + req.params.contact});
+					res.json({"status":"failed", "Message":"Failed to find a vendor with contact = " + req.params.contact});
 				}
  				else {
-					console.log("customer profile = " + profile);
+					console.log("vendor profile = " + profile);
 					if (req.accepts('json')) {
 						console.log("Accepting JSON...");
 						res.json(profile);
@@ -196,12 +134,12 @@ exports.profile = function(req, res) {
 				console.log("Error: " + err);
 				res.json({
 					"status" : "error",
-					"error" : "Error finding Customer with contact: " + req.params.contact
+					"error" : "Error finding Vendor with contact: " + req.params.contact
 				});
 			}
 		});
 	} else {
-		console.log("No user contact supplied");
+		console.log("No vendor contact supplied");
 		res.json({
 			"status" : "error",
 			"error" : "No contact supplied"
@@ -211,7 +149,7 @@ exports.profile = function(req, res) {
 
 /**
  * Updates the customer profile - Done & Tested
- URL: https://localhost:3000/users/update/9902455333 
+ URL: https://localhost:3000/vendor/update/9902455333 
  Headers : 
  	Content-Type: application/json && 
  	Accept: application/json 
@@ -221,13 +159,13 @@ exports.profile = function(req, res) {
  		"name" : "Ashish K Mathur", 
  		"contact" : 9902455333, 
  		"email" : "reachashishmathur@gmail.com", 
- 		"prefVendCont": 918028450292 
+ 		"address": "#123, Varthu rRoad" 
  	}
  Return: updated customer record
  */
 exports.udpate = function(req, res) {
-	console.log('customerJS, update: ' + req.params.contact);
-	console.log('customerJS, update: Document = ' + JSON.stringify(req.body));
+	console.log('vendor, update: ' + req.params.contact);
+	console.log('vendor, update: Document = ' + JSON.stringify(req.body));
 	// TODO Validate data sent for missing data. Hate to update the database
 	// with bad data if what was sent was bad
 	// If the contact sent was either incorrect(we didn't find the user in our
@@ -247,12 +185,11 @@ exports.udpate = function(req, res) {
 	// put 'undefined' in the database. We should check.
 	// 4. What format should we pass the data from the client to the server? For
 	// now I am setting it to now()
-	Customer.update({
+	Vendor.update({
 		contact : req.params.contact,
 		name : req.body.name,
 		email : req.body.email,
 		address : req.body.address,
-		prefVendCont : req.body.prefVendCont,
 		modifiedOn : Date.now(),
 		lastLogin : Date.now()
 	}, function(err, doc) {

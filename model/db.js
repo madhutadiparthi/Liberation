@@ -215,6 +215,7 @@ var vendorSchema = new mongoose.Schema({
 	shopName: String,
 	email: String,
 	contact : Number,
+	address : String,
 	/*otherContacts: [Number],
 	addrress: {shopNum: String,
 		buildingName: String,
@@ -231,6 +232,30 @@ var vendorSchema = new mongoose.Schema({
 	
 });
 
+//Get the customer details using contact
+vendorSchema.statics.findByContact = function (contact, callback) {
+	this.findOne(
+	{ contact: contact },
+	'name contact email address lastLogin',
+	{sort: 'name'},
+	callback);
+};
+
+//Update customer profile
+vendorSchema.statics.update = function (vendorData, callback) {
+	console.log("vendor profile update : " + JSON.stringify(vendorData));
+	this.findOneAndUpdate(
+	{ contact: vendorData.contact },
+	{$set : {name: vendorData.name,
+			 email : vendorData.email,
+			 address : vendorData.address,
+			 modifiedOn: vendorData.modifiedOn,
+			 lastLogin: vendorData.lastLogin
+		}
+	},
+	{new: true},
+	callback);
+};
 //Build the Vendor model
 mongoose.model('Vendor', vendorSchema);
 /*****************************************************************
