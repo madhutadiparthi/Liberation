@@ -20,7 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,7 +33,7 @@ app.use('/', routes);
 //USER ROUTES
 app.get('/login', customer.login);			//Login Form
 app.post('/login/:contact', customer.doLogin);		//Login action
-
+	
 //CUSTOMER Services
 app.post('/customer/new', customer.create);	//Register new customer
 app.get('/customer/:contact', customer.profile);	//Get customer profile

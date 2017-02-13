@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>Nedmanage Services</title>
+</head>
+
+<body>
+This is the list of services available from this site
+
+<pre>
+<h3>Create an Order</h3>
+	 For example, from a post client
+	   URL = http://medmanage.sytes.net/orders/new 
+	   TYPE = POST
+	   Data =
+	   <data starts here>
+		 	{
+				"customerContact" : "9902455333", 
+				"vendorContact" : 918028450292, 
+				"drugList": [
+	  				{"drugName":"Dolo", "strength":"650mg", "quantity":"15"},
+	  				{"drugName":"Saridon","strength":"500mg","quantity":"30"}
+				]
+			}
+	<data ends here>
+	</pre>
+</body>
+</html>
+	
